@@ -20,7 +20,7 @@ var init            =   _.flow(
                           _.trigger( engine.init ),
                           _.when(  engine.inited,   _.log("engine inited") ),
                           _.when( !engine.inited,   _.error("something went wrong") ),
-                          _.when( !getOrCreateUser,   _.error("could not get/create user") ),
+                          _.when( !getOrCreateUser, _.error("could not get/create user") ),
                           _.when(  engine.user,     _.error("could not get/create user") ),
                         )
 
