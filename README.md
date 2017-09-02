@@ -2,10 +2,10 @@ Just a bunch of practical functional mixins for **lodash/fp** to make code more 
 
 ## Philosophy
 
-A. all functions return a function which support only 1 input-argument
-B. almost all functions return 1 output argument
-
-> A+B = functional chain-orama!
+1. `_.flow` and `_.compose` rock
+2. all functions return a function which support only 1 input-argument
+3. almost all functions return 1 output argument
+4. I want to compose promises and functions together hasslefree 
 
 ## Functions
 
