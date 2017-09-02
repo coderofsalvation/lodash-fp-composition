@@ -1,4 +1,4 @@
-Just a bunch of practical functional mixins to make code more readable/maintainable
+Just a bunch of practical functional mixins for **lodash/fp** to make code more readable/maintainable
 
 ## Philosophy
 
