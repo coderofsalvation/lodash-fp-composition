@@ -7,6 +7,25 @@ Just a bunch of practical functional mixins for **lodash/fp** to make code more 
 3. almost all functions return 1 output argument
 4. I want to compose promises and functions together hasslefree 
 
+What does code looks like with lodash/fp + this?
+
+```
+
+	var getOrCreateUser = 	_.flow( 
+								_.either( engine.getUser, engine.createUser ), 
+								_.maybe( _.log("user ok") 
+							)
+
+	var init            = 	_.flow(
+			           		_.trigger( engine.init ),
+			           		_.when(  engine.inited, 	_.log("engine inited") ),
+			           		_.when( !engine.inited, 	_.error("something went wrong") ),
+			           		_.when( !getOrCreateUser, 	_.error("could not get/create user") ),
+			           		_.when(  engine.user,   	_.error("could not get/create user") ),
+			           	)
+
+```
+
 ## Functions
 
 ## _.trigger(fn)

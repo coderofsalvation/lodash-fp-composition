@@ -30,6 +30,20 @@ function either(a,b){
 	}
 }
 
+/* _.maybe(fn)
+ *
+ * this will execute function fn only when there's input. 
+ * this comes in handy when its unsure whether the previous function was succesful in a chain/flow/composed function.(){}
+ *
+ * example: _.flow( getOrCreateUser, maybe(_.log("user ok")) )
+ */
+
+function maybe(fn){
+	return function(input){
+		return input ? fn(input) : input 
+	}
+}
+
 /* _.when(f, g)
  *
  * hipster if statement, only execute function g when function f does not return null/false/undefined 
