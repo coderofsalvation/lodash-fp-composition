@@ -6,6 +6,7 @@ Just a bunch of practical functional mixins for **lodash/fp** to make code more 
 2. all functions return a function which support only 1 input-argument
 3. almost all functions return 1 output argument
 4. I want to compose promises and functions together hasslefree 
+5. if/else statements are impossible to reuse (but functions are)
 
 What does code looks like with lodash/fp + this?
 
