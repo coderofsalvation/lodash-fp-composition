@@ -11,18 +11,18 @@ What does code looks like with lodash/fp + this?
 
 ```
 
-	var getOrCreateUser = 	_.flow( 
-								_.either( engine.getUser, engine.createUser ), 
-								_.maybe( _.log("user ok") 
-							)
+var getOrCreateUser = 	_.flow( 
+							_.either( engine.getUser, engine.createUser ), 
+							_.maybe( _.log("user ok") 
+						)
 
-	var init            = 	_.flow(
-			           		_.trigger( engine.init ),
-			           		_.when(  engine.inited, 	_.log("engine inited") ),
-			           		_.when( !engine.inited, 	_.error("something went wrong") ),
-			           		_.when( !getOrCreateUser, 	_.error("could not get/create user") ),
-			           		_.when(  engine.user,   	_.error("could not get/create user") ),
-			           	)
+var init            = 	_.flow(
+						_.trigger( engine.init ),
+						_.when(  engine.inited, 	_.log("engine inited") ),
+						_.when( !engine.inited, 	_.error("something went wrong") ),
+						_.when( !getOrCreateUser, 	_.error("could not get/create user") ),
+						_.when(  engine.user,   	_.error("could not get/create user") ),
+					)
 
 ```
 
