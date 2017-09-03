@@ -10,6 +10,7 @@ keep the darkside away: practical functional mixins for **lodash/fp** to make co
 2. `_.flow` and `_.compose` is good stuff
 3. anti-if: nested if/elses invites powers of dark side ([see anti-if-campaign](https://cirillocompany.de/pages/anti-if-campaign))
 4. composition of promises and functions should be hasslefree
+5. every line in your code should be a function declaration, call or assignment 
 
 What does if-less code looks like using this library?
 
