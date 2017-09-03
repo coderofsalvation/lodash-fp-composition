@@ -17,18 +17,18 @@ engine.getUser           = fetch("/user/current",{method:"get"})
 
 engine.createUser        = fetch("/user",        {method:"post"})            
 
-engine.getOrCreateUser   = 	_.flow( 
-                              _.either( engine.getUser, engine.createUser ), 
-                              _.maybe( _.log("user ok") 
-                           	)
+engine.getOrCreateUser   = _.flow( 
+                               _.either( engine.getUser, engine.createUser ), 
+                               _.maybe( _.log("user ok") 
+                           )
 
-engine.init              = 	_.flow(
-                              _.trigger( engine.init ),
-                              _.when(  engine.inited,   _.log("engine inited") ),
-                              _.when( !engine.inited,   _.error("something went wrong") ),
-                              _.when( getOrCreateUser, 	_.either( _.log("got user"), _.error("could not get/create user") ) ),
-                              _.when( engine.user,     	_.error("could not get/create user") ),
-                            )
+engine.init              = _.flow(
+                               _.trigger( engine.init ),
+                               _.when(  engine.inited,   _.log("engine inited") ),
+                               _.when( !engine.inited,   _.error("something went wrong") ),
+                               _.when( getOrCreateUser,   _.either( _.log("got user"), _.error("could not get/create user") ) ),
+                               _.when( engine.user,       _.error("could not get/create user") ),
+                           )
 
 engine.init( _.clone(engine) ) 
 ```
