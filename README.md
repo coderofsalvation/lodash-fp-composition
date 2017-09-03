@@ -4,13 +4,18 @@ keep the darkside away: practical functional mixins for **lodash/fp** to make co
 
 ## Philosophy
 
-1. `_.flow` and `_.compose` rock, and make things very readable
-2. nested if/elses is the power of dark side ([see anti-if-campaign](https://cirillocompany.de/pages/anti-if-campaign))
-3. hasslefree composition of promises and functions 
+1. functional programming in javascript has 2 categories: the good stuff..and there's the other stuff :)
+2. `_.flow` and `_.compose` is good stuff
+3. nested if/elses is the power of dark side ([see anti-if-campaign](https://cirillocompany.de/pages/anti-if-campaign))
+4. composition of promises and functions should be hasslefree
 
 What does code looks like with this library:
 
 ```
+
+engine.getUser           = fetch("/user/current",{method:"get"})             
+
+engine.createUser        = fetch("/user",        {method:"post"})            
 
 engine.getOrCreateUser   = 	_.flow( 
                               _.either( engine.getUser, engine.createUser ), 
