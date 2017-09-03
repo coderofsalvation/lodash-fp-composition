@@ -1,6 +1,6 @@
 keep the darkside away: practical functional mixins for **lodash/fp** to make code more readable, maintainable & composable
 
-<img src='https://media1.giphy.com/media/VZovxx7W7tbu8/giphy.gif' width="30%"/>
+<center><img src='https://media1.giphy.com/media/VZovxx7W7tbu8/giphy.gif' width="50%"/></center>
 
 ## Philosophy
 
