@@ -1,30 +1,31 @@
-Just a bunch of practical functional mixins for **lodash/fp** to make code more readable/maintainable
+keep the darkside away: practical functional mixins for **lodash/fp** to make code more readable, maintainable & composable
+
+<img src='https://media1.giphy.com/media/VZovxx7W7tbu8/giphy.gif' width="30%"/>
 
 ## Philosophy
 
-1. `_.flow` and `_.compose` rock
-2. all functions return a function which support only 1 input-argument
-3. almost all functions return 1 output argument
-4. I want to compose promises and functions together hasslefree 
-5. if/else statements are impossible to reuse (but functions are)
+1. `_.flow` and `_.compose` rock, and make things very readable
+2. nested if/elses is the power of dark side ([see anti-if-campaign](https://cirillocompany.de/pages/anti-if-campaign))
+3. hasslefree composition of promises and functions 
 
-What does code looks like with lodash/fp + this?
+What does code looks like with this library:
 
 ```
 
-var getOrCreateUser =   _.flow( 
-                          _.either( engine.getUser, engine.createUser ), 
-                          _.maybe( _.log("user ok") 
-                        )
+engine.getOrCreateUser   = 	_.flow( 
+                              _.either( engine.getUser, engine.createUser ), 
+                              _.maybe( _.log("user ok") 
+                           	)
 
-var init            =   _.flow(
-                          _.trigger( engine.init ),
-                          _.when(  engine.inited,   _.log("engine inited") ),
-                          _.when( !engine.inited,   _.error("something went wrong") ),
-                          _.when( !getOrCreateUser, _.error("could not get/create user") ),
-                          _.when(  engine.user,     _.error("could not get/create user") ),
-                        )
+engine.init              = 	_.flow(
+                              _.trigger( engine.init ),
+                              _.when(  engine.inited,   _.log("engine inited") ),
+                              _.when( !engine.inited,   _.error("something went wrong") ),
+                              _.when( getOrCreateUser, 	_.either( _.log("got user"), _.error("could not get/create user") ) ),
+                              _.when( engine.user,     	_.error("could not get/create user") ),
+                            )
 
+engine.init( _.clone(engine) ) 
 ```
 
 ## Functions

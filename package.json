@@ -1,0 +1,22 @@
+{
+  "name": "lodash-fp-composition",
+  "version": "1.0.0",
+  "description": "Just a bunch of practical functional mixins for **lodash/fp** (v4) to make code/promises more composable, and therefore readable, maintainable & composable",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/coderofsalvation/lodash-fp-composition"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies":{
+		"lodash":""
+  },
+  "bugs": {
+    "url": "https://github.com/coderofsalvation/lodash-fp-composition/issues"
+  },
+  "homepage": "https://github.com/coderofsalvation/lodash-fp-composition#readme"
+}
