@@ -2,32 +2,40 @@ keep the darkside away: practical functional mixins for **lodash/fp** to make co
 
 <center><img src='https://media1.giphy.com/media/VZovxx7W7tbu8/giphy.gif' width="50%"/></center>
 
+> Warning: Experimental
+
 ## Philosophy
 
 1. functional programming in javascript has 2 categories: the good stuff..and there's the other stuff :)
 2. `_.flow` and `_.compose` is good stuff
-3. nested if/elses is the power of dark side ([see anti-if-campaign](https://cirillocompany.de/pages/anti-if-campaign))
+3. anti-if: nested if/elses invites powers of dark side ([see anti-if-campaign](https://cirillocompany.de/pages/anti-if-campaign))
 4. composition of promises and functions should be hasslefree
 
-What does code looks like with this library:
+What does if-less code looks like using this library?
 
 ```
+engine                   = {
+							 inited:false, 
+							 user: false		
+						   }
 
-engine.getUser           = fetch("/user/current",{method:"get"})             
+engine.isInited          = _.get('inited')
 
-engine.createUser        = fetch("/user",        {method:"post"})            
+engine.isNotInited       = _.negate( engine.isInited )
+
+engine.getUser           = fetch("/user/current",{method:"get"})      // =promise       
+
+engine.createUser        = fetch("/user",        {method:"post"})     // =promise        
 
 engine.getOrCreateUser   = _.flow( 
                                _.either( engine.getUser, engine.createUser ), 
-                               _.maybe( _.log("user ok") 
+                               _.maybe( _.log("user ok") )
                            )
 
 engine.init              = _.flow(
-                               _.trigger( engine.init ),
-                               _.when(  engine.inited,   _.log("engine inited") ),
-                               _.when( !engine.inited,   _.error("something went wrong") ),
-                               _.when( getOrCreateUser,   _.either( _.log("got user"), _.error("could not get/create user") ) ),
-                               _.when( engine.user,       _.error("could not get/create user") ),
+                               _.when( getOrCreateUser,     _.lensOver( 'user', getOrCreateUser ) ), 
+                               _.when( engine.isInited,     _.lensOver('inited', => true) ), 
+                               _.when( engine.isNotInited,  _.error("something went wrong") ),
                            )
 
 engine.init( _.clone(engine) ) 
