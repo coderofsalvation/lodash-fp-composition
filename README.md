@@ -14,19 +14,6 @@ keep the darkside away: practical functional mixins for **lodash/fp** to make co
 What does if-less code looks like using this library?
 
 ```
-engine                   = {
-							 inited:false, 
-							 user: false		
-						   }
-
-engine.isInited          = _.get('inited')
-
-engine.isNotInited       = _.negate( engine.isInited )
-
-engine.getUser           = fetch("/user/current",{method:"get"})      // =promise       
-
-engine.createUser        = fetch("/user",        {method:"post"})     // =promise        
-
 engine.getOrCreateUser   = _.flow( 
                                _.either( engine.getUser, engine.createUser ), 
                                _.maybe( _.log("user ok") )
@@ -40,6 +27,8 @@ engine.init              = _.flow(
 
 engine.init( _.clone(engine) ) 
 ```
+
+> see full example [here](https://gist.github.com/coderofsalvation/e198c613d51b13c4065fb5f2cac646bb)
 
 ## Functions
 
