@@ -52,7 +52,7 @@ function maybe(fn){
  */
 
 function when(f,g){
-	function(input){
+	return function(input){
 		if( f(v) ) g(v)
 	}
 }
@@ -90,7 +90,7 @@ function compose () {
  */
 
 function lensOver = function(key, fn){
-	function (input){
+	return function (input){
 		var new_obj = JSON.parse( JSON.stringify(obj) )
 		prop;
 		if(_.has(new_obj,key)){//not efficient: a REAL lens can get/set all in one go
@@ -109,7 +109,7 @@ function lensOver = function(key, fn){
  */
 
 function template_es6(es6_template) {
-	function (input){
+	return function (input){
 		data = JSON.parse( JSON.stringify(input) )
 		var reg = /\$\{(.*?)\}/g;
 		var res;

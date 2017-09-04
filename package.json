@@ -1,6 +1,6 @@
 {
   "name": "lodash-fp-composition",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "functional mixins for **lodash/fp** (v4) to keep powers of darkside away (_.flow + _.compose support for promises etc)",
   "main": "index.js",
   "scripts": {
@@ -13,7 +13,6 @@
   "author": "",
   "license": "ISC",
   "dependencies":{
-		"lodash":""
   },
   "bugs": {
     "url": "https://github.com/coderofsalvation/lodash-fp-composition/issues"
