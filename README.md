@@ -8,10 +8,12 @@ keep the darkside away: practical functional mixins for **lodash/fp** to make co
 
 1. functional programming in javascript has 2 categories: the good stuff..and there's the other stuff :)
 2. `_.flow` and `_.compose` is good stuff
-3. anti-if: nested if/elses invites powers of dark side ([see anti-if-campaign](https://cirillocompany.de/pages/anti-if-campaign))
-4. composition of promises and functions should be hasslefree
+3. composition of promises and functions should be hasslefree
+4. nested ifs/elses and early function returns, invite powers of dark side ([see anti-if-campaign](https://cirillocompany.de/pages/anti-if-campaign))
 
-What does if-less code looks like using this library?
+<img src="https://cdn.shopify.com/s/files/1/0257/1675/t/147/assets/banner_ive-joined.gif?12750917494953216175"/>
+
+So..what does code looks like when using this library?
 
 ```
 engine.getOrCreateUser   = _.flow( 
