@@ -89,7 +89,7 @@ function compose () {
  * 			_.lensOver( "foo.bar", updateBar )({foo:{bar:0}})  // sets 'foo.bar' to 123 (and prints in console)
  */
 
-function lensOver = function(key, fn){
+function lensOver(key, fn){
 	return function (input){
 		var new_obj = JSON.parse( JSON.stringify(obj) )
 		prop;
@@ -173,7 +173,7 @@ function error(msg){
 
 _.mixin({
 	lensOver:lensOver, 
-	flow:compose
+	flow:compose, 
 	either: either, 
 	when: when, 
 	trigger: trigger, 
