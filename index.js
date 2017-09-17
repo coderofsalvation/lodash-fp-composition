@@ -2,15 +2,16 @@ import _ from 'lodash'
 
 // NOTE: following are all curried functions
 
-/* _.trigger(fn)
+/*
+ * _.trigger(fn)
  *
  * trigger simply executes a function, but forwards original input as output.
  * this comes in handy when you don't want to break a flow/chain
  *
  * example:	_.flow( doSomethingWithInput, _.trigger( alert ), doSomethingElseWithInput )({foo:"bar"})
- * 			
+ *
  */
-function trigger(fn){ 
+function trigger(fn){
 	return function(input){
 		fn(input)
 		return input
@@ -19,7 +20,7 @@ function trigger(fn){
 
 /* _.either(a, b)
  *
- * this will execute function b only when function a returns false/null/undefined 
+ * this will execute function b only when function a returns false/null/undefined
  *
  * example: _.either(getUserByEmail,createUserEmail)("foo@gmail.com")
  */
@@ -32,7 +33,7 @@ function either(a,b){
 
 /* _.maybe(fn)
  *
- * this will execute function fn only when there's input. 
+ * this will execute function fn only when there's input.
  * this comes in handy when its unsure whether the previous function was succesful in a chain/flow/composed function.(){}
  *
  * example: _.flow( getOrCreateUser, maybe(_.log("user ok")) )
@@ -40,13 +41,13 @@ function either(a,b){
 
 function maybe(fn){
 	return function(input){
-		return input ? fn(input) : input 
+		return input ? fn(input) : input
 	}
 }
 
 /* _.when(f, g)
  *
- * hipster if statement, only execute function g when function f does not return null/false/undefined 
+ * hipster if statement, only execute function g when function f does not return null/false/undefined
  *
  * example: _.when( _.isString, console.log )("foo")
  */
@@ -64,11 +65,11 @@ function when(f,g){
  * example: _.flow( new Promise(.....), alert )("foo@gmail.com")
  */
 
-var compose                                        // example: var alertUser = _.flow( 
-var internalCompose = function (args) {            //              _.getUserById,      
+var compose                                        // example: var alertUser = _.flow(
+var internalCompose = function (args) {            //              _.getUserById,
 	var P = compose.Promise || Promise               //              _.pick('user.name'),
 	return function (initialValue) {                 //              _.fallback('could not find user'),
-		var chain = P.resolve(initialValue)            //              alert      
+		var chain = P.resolve(initialValue)            //              alert
 		var i, j                                       //          )
 		for (i = 0, j = args.length; i < j; i++)       //          alertUser('32lk423')  -> will resolve getUserById promise + alert
 			chain = chain.then(args[i])
@@ -83,7 +84,7 @@ function compose () {
 
 /* _.lensOver(path, fn)
  *
- * lens over allows i/o for a nested property 
+ * lens over allows i/o for a nested property
  *
  * example: var updateBar = _.flow( -> 123, _.log )
  * 			_.lensOver( "foo.bar", updateBar )({foo:{bar:0}})  // sets 'foo.bar' to 123 (and prints in console)
@@ -122,27 +123,27 @@ function template_es6(es6_template) {
 
 /* _.prefix(prefix, fn)
  *
- * simple way to prefix a function which outputs a string 
+ * simple way to prefix a function which outputs a string
  *
  * example: _.error = _.prefix("error: ", _.log)
  */
 function prefix(prefix, fn){
 	return function(input){
 		fn( (prefix||'') + str )
-		return input	
+		return input
 	}
 }
 
 /* _.postfix(postfix, fn)
  *
- * simple way to postfix a function which outputs a string 
+ * simple way to postfix a function which outputs a string
  *
  * example: _.flow( _.get('.length'), _.prefix("items", _.log) )([1, 2, 3])
  */
 function postfix(postfix, fn){
 	return function(input){
 		fn( (prefix||'') + str )
-		return input	
+		return input
 	}
 }
 
@@ -171,13 +172,19 @@ function error(msg){
 	return prefix("error: ", _log )
 }
 
-_.mixin({
-	lensOver:lensOver, 
-	flow:compose, 
-	either: either, 
-	when: when, 
-	trigger: trigger, 
-	template_es6: template_es6, 
-	log: log, 
+var functions = {
+	lensOver:lensOver,
+	flow:compose,
+	either: either,
+	when: when,
+	trigger: trigger,
+	template_es6: template_es6,
+	log: log,
 	error: error
-})
+}
+
+_.mixin(functions)
+
+export default functions
+export { compose as flow }
+export { lensOver, either, when, trigger, template_es6, log, error }
