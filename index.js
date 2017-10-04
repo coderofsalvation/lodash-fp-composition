@@ -1,22 +1,7 @@
-import _ from 'lodash'
+'use strict';
+var _ = require('lodash')
 
 // NOTE: following are all curried functions
-
-/*
- * _.trigger(fn)
- *
- * trigger simply executes a function, but forwards original input as output.
- * this comes in handy when you don't want to break a flow/chain
- *
- * example:	_.flow( doSomethingWithInput, _.trigger( alert ), doSomethingElseWithInput )({foo:"bar"})
- *
- */
-function trigger(fn){
-	return function(input){
-		fn(input)
-		return input
-	}
-}
 
 /* _.either(a, b)
  *
@@ -172,6 +157,26 @@ function error(msg){
 	return prefix("error: ", _log )
 }
 
+/*
+ * _.trigger(fn)
+ *
+ * trigger simply executes a function OR promise, but forwards original input as output.
+ * this comes in handy when you don't want to break a flow/chain
+ *
+ * example:	_.flow( doSomethingWithInput, _.trigger( alert ), doSomethingElseWithInput )({foo:"bar"})
+ *
+ */
+function trigger(fn){
+	return function(input){
+		if( fn.then ){
+			return compose(fn, new Promise( (resolve, reject) => resolve(input) ) )
+		}else{
+			fn(input)
+			return input
+		}
+	}
+}
+
 var functions = {
 	lensOver:lensOver,
 	flow:compose,
@@ -185,6 +190,11 @@ var functions = {
 
 _.mixin(functions)
 
-export default functions
-export { compose as flow }
-export { lensOver, either, when, trigger, template_es6, log, error }
+module.exports.flow = compose
+module.exports.lensOver = lensOver
+module.exports.either = either
+module.exports.when = when
+module.exports.trigger = trigger
+module.exports.template_es6 = template_es6
+module.exports.log = log
+module.exports.error = error
