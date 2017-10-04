@@ -16,6 +16,7 @@ keep the darkside away: practical functional mixins for **lodash/fp** to make co
 So..what does code looks like when using this library?
 
 ```
+
 engine.getOrCreateUser   = _.flow( 
                                _.either( engine.getUser, engine.createUser ), 
                                _.maybe( _.log("user ok") )
@@ -34,22 +35,22 @@ engine.init( _.clone(engine) )
 
 ## Functions
 
-## _.trigger(fn)
- 
-trigger simply executes a function, but forwards original input as output.
-this comes in handy when you don't want to break a flow/chain
- 
-> example:	_.flow( doSomethingWithInput, _.trigger( alert ), doSomethingElseWithInput )({foo:"bar"})
-			
 ## _.either(a, b)
  
-this will execute function b only when function a returns false/null/undefined 
+this will execute function b only when function a returns false/null/undefined
  
 > example: _.either(getUserByEmail,createUserEmail)("foo@gmail.com")
  
+## _.maybe(fn)
+ 
+this will execute function fn only when there's input.
+this comes in handy when its unsure whether the previous function was succesful in a chain/flow/composed function.(){}
+ 
+> example: _.flow( getOrCreateUser, maybe(_.log("user ok")) )
+ 
 ## _.when(f, g)
  
-hipster if statement, only execute function g when function f does not return null/false/undefined 
+hipster if statement, only execute function g when function f does not return null/false/undefined
  
 > example: _.when( _.isString, console.log )("foo")
  
@@ -61,7 +62,7 @@ improved version of _.flow, which also supports automatic resolving of promises
  
 ## _.lensOver(path, fn)
  
-lens over allows i/o for a nested property 
+lens over allows i/o for a nested property
  
 > example: var updateBar = _.flow( -> 123, _.log )
 >			_.lensOver( "foo.bar", updateBar )({foo:{bar:0}})  // sets 'foo.bar' to 123 (and prints in console)
@@ -74,13 +75,13 @@ simple es6 templates for in the browser
  
 ## _.prefix(prefix, fn)
  
-simple way to prefix a function which outputs a string 
+simple way to prefix a function which outputs a string
  
 > example: _.error = _.prefix("error: ", _.log)
  
 ## _.postfix(postfix, fn)
  
-simple way to postfix a function which outputs a string 
+simple way to postfix a function which outputs a string
  
 > example: _.flow( _.get('.length'), _.prefix("items", _.log) )([1, 2, 3])
  
@@ -95,4 +96,22 @@ simple log function (which forwards input to output)
 simple error function (which forwards input to output)
  
 > example: _.when( !hasFoo, _.prefix("something went wrong:", _error ) )({input:"foo"})
+ 
+## _.trigger(fn)
+ 
+trigger simply executes a function OR promise, but forwards original input as output.
+this comes in handy when you don't want to break a flow/chain
+ 
+> example:	_.flow( doSomethingWithInput, _.trigger( alert ), doSomethingElseWithInput )({foo:"bar"})
+ 
+ 
+## _.mapAsync(arr, done, cb)
+ 
+calls cb(data, next) for each element in arr, and continues loop 
+based on next()-calls (last element propagates done()).
+Perfect to iterate over an array synchronously,  while performing async
+operations inbetween the elements.
+ 
+> example:	_.mapAsync([1, 2, 3], alert, (data, next) => next() )
+ 
  

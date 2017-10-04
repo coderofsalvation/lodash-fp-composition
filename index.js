@@ -58,7 +58,6 @@ var internalCompose = function (args) {            //              _.getUserById
 		var i, j                                       //          )
 		for (i = 0, j = args.length; i < j; i++)       //          alertUser('32lk423')  -> will resolve getUserById promise + alert
 			chain = chain.then(args[i])
-
 		return chain
 	}
 }
@@ -177,7 +176,46 @@ function trigger(fn){
 	}
 }
 
+/*
+ * _.mapAsync(arr, done, cb)
+ *
+ * calls cb(data, next) for each element in arr, and continues loop 
+ * based on next()-calls (last element propagates done()).
+ * Perfect to iterate over an array synchronously,  while performing async
+ * operations inbetween the elements.
+ *
+ * example:	_.mapAsync([1, 2, 3], alert, (data, next) => next() )
+ *
+ */
+function mapAsync(arr, done, cb) {
+	if( !arr || arr.length == 0 ) done() 
+	var f, funcs, i, k, v;
+	funcs = [];
+	i = 0;
+	for (k in arr) {
+	  v = arr[k];
+	  f = function(i, v) {
+		return function() {
+		  var e, error;
+		  try {
+			if (funcs[i + 1] != null) {
+			  return cb(v, i, funcs[i + 1]);
+			} else {
+			  return cb(v, i, done);
+			}
+		  } catch (error) {
+			e = error;
+			return done(new Error(e));
+		  }
+		};
+	  };
+	  funcs.push(f(i++, v));
+	}
+	return funcs[0]()
+}
+
 var functions = {
+	mapAsync: mapAsync, 
 	lensOver:lensOver,
 	flow:compose,
 	either: either,
@@ -198,3 +236,4 @@ module.exports.trigger = trigger
 module.exports.template_es6 = template_es6
 module.exports.log = log
 module.exports.error = error
+module.exports.mapAsync = mapAsync
