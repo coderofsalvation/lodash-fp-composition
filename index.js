@@ -61,7 +61,16 @@ function when(f,g){
  *
  * improved version of _.flow, which also supports automatic resolving of promises
  *
- * example: _.flow( new Promise(.....), alert )("foo@gmail.com")
+ * > example: a = _.flow( new Promise(.....), _.trigger(alert), Object.keys )
+ * >          a({foo:1, bar:2})
+ * 
+ * ```
+ *   input:{foo:1,bar:2} --->  promise --+--> Object.keys(input) ) 
+ *                                       |
+ *                                       +--> alert(input)
+ *   output:['foo','bar'] 
+ * 
+ * ```
  */
 
 var compose                                        
