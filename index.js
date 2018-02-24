@@ -16,6 +16,20 @@ function either(a,b){
 	}
 }
 
+/* _.getno(path)
+ *
+ * this is the opposite of _.get 
+ *
+ * example: var a = _.getno( 'foo.bar' )
+ *          a({foo:1}) // returns true
+ */
+
+function getno(path){
+	return function(input){
+		return _.get(path,input) == undefined
+	}
+}
+
 /* _.maybe(fn)
  *
  * this will execute function fn only when there's input.
@@ -43,23 +57,28 @@ function when(f,g){
 	}
 }
 
-/* _.flow( mixed_array_of_promises_and_functions )
+/* _.flow( mixed_arguments_of_promises_and_functions, ... )
  *
  * improved version of _.flow, which also supports automatic resolving of promises
  *
  * example: _.flow( new Promise(.....), alert )("foo@gmail.com")
  */
 
-var compose                                        // example: var alertUser = _.flow(
-var internalCompose = function (args) {            //              _.getUserById,
-	var P = compose.Promise || Promise               //              _.pick('user.name'),
-	return function (initialValue) {                 //              _.fallback('could not find user'),
-		var chain = P.resolve(initialValue)            //              alert
-		var i, j                                       //          )
-		for (i = 0, j = args.length; i < j; i++)       //          alertUser('32lk423')  -> will resolve getUserById promise + alert
-			chain = chain.then(args[i])
+var compose                                        
+var internalCompose = function (args) {            
+	var f 
+	f = function (initialValue) {              
+		var chain = compose.Promise || Promise.resolve(initialValue)        
+		var i, j                                   
+		var me = this
+		for (i = 0, j = args.length; i < j; i++){
+			chain = chain.then( args[i].then ? function(p){ return p }.bind(null,args[i]) : args[i] )
+		}
+		chain.catch( f.catch )
 		return chain
 	}
+	f.catch = function(efn){ f.catch = efn; return f }
+	return f
 }
 
 function compose () {
@@ -76,8 +95,9 @@ function compose () {
 
 function lensOver(key, fn){
 	return function (input){
-		var new_obj = JSON.parse( JSON.stringify(obj) )
-		prop;
+		if( !input ) return
+		var new_obj = JSON.parse( JSON.stringify(input) )
+		var prop;
 		if(_.has(new_obj,key)){//not efficient: a REAL lens can get/set all in one go
 			prop = _.get(new_obj,key);
 			_.set(new_obj,key,fn(prop));
@@ -113,7 +133,7 @@ function template_es6(es6_template) {
  */
 function prefix(prefix, fn){
 	return function(input){
-		fn( (prefix||'') + str )
+		fn( (prefix||'') + input )
 		return input
 	}
 }
@@ -126,7 +146,7 @@ function prefix(prefix, fn){
  */
 function postfix(postfix, fn){
 	return function(input){
-		fn( (prefix||'') + str )
+		fn( (prefix||'') + input )
 		return input
 	}
 }
@@ -162,11 +182,12 @@ function error(msg){
  * trigger simply executes a function OR promise, but forwards original input as output.
  * this comes in handy when you don't want to break a flow/chain
  *
- * example:	_.flow( doSomethingWithInput, _.trigger( alert ), doSomethingElseWithInput )({foo:"bar"})
+ * example:	_.flow( _.trigger( alert ), _.trigger(console.dir) )({foo:"bar"})
  *
  */
-function trigger(fn){
+function trigger(a,b){
 	return function(input){
+		var fn = b ? lensOver(a,b) : a
 		if( fn.then ){
 			return compose(fn, new Promise( (resolve, reject) => resolve(input) ) )
 		}else{
@@ -219,11 +240,14 @@ var functions = {
 	lensOver:lensOver,
 	flow:compose,
 	either: either,
+	getno:getno, 
 	when: when,
 	trigger: trigger,
 	template_es6: template_es6,
 	log: log,
-	error: error
+	error: error, 
+	prefix:prefix, 
+	postfix:postfix
 }
 
 _.mixin(functions)
@@ -231,9 +255,12 @@ _.mixin(functions)
 module.exports.flow = compose
 module.exports.lensOver = lensOver
 module.exports.either = either
+module.exports.getno = getno
 module.exports.when = when
 module.exports.trigger = trigger
 module.exports.template_es6 = template_es6
 module.exports.log = log
 module.exports.error = error
 module.exports.mapAsync = mapAsync
+module.exports.prefix = prefix
+module.exports.postfix = postfix
