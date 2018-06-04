@@ -198,7 +198,7 @@ function trigger(a,b){
 	return function(input){
 		var fn = b ? lensOver(a,b) : a
 		if( fn.then ){
-			return compose(fn, new Promise( (resolve, reject) => resolve(input) ) )
+			return compose(fn, new Promise( function(resolve, reject){resolve(input)} ) )
 		}else{
 			fn(input)
 			return input
