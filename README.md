@@ -4,43 +4,6 @@ keep the darkside away: practical functional mixins for **lodash/fp** to make co
 
 > Warning: Experimental
 
-## Philosophy
-
-1. functional programming in javascript has 2 categories: the good stuff..and there's the other stuff :)
-2. `_.flow` (=reversed compose) is great, and reduces the amount of temporary variables 
-3. Promises are great building blocks for async flow-control (and can be extended)
-4. mixing functions & promises should be hasslefree (lodash + promise = not hasslefree)
-5. accept javascript, therefore accept and expect mutable objects
-
-| Usage | what this lib does | comment |
-|-|-|
-| `_.flow(... , ...)` | adds support for automic promise-resolving | without arguments, it creates an extended promise |
-| `_.flow().then( [Function] )`           | **always** forwards processed input to next function | reduces if/else statements |
-| `_.flow().then( [Function] ).fork()` | **dont wait** for the output, just forward unprocessed input to next function | immutable data FTW |
-| `_.flow().then( ... ).when( isValid )` | **always** forwards input, but processes if isValid({..}) is true | prevents need of inline promise-code and early returns |
-
-> NOTE: optionally you can define your own clonefunction like `.fork(_.cloneDeep)` e.g. 
-
-<img src="https://cdn.shopify.com/s/files/1/0257/1675/t/147/assets/banner_ive-joined.gif?12750917494953216175"/>
-
-## Usage 
-
-| type | how |
-|-|-|
-| nodejs with lodash | `var _                 = require('lodash/fp')`
-| | `_.mixin( require('lodash-fp-composition')` |
-| nodejs without lodash | `var _ = require('lodash-fp-composition')` |
-| browser without lodash | `<script src='https://unpkg.com/lodash-fp-composition'></script>`|
-|                        | `<script>flow(...)</script>
-| browser with lodash     | `<script src='https://unpkg.com/lodash'></script>`|
-|                        | `<script src='https://unpkg.com/lodash-fp-composition'></script>`|
-|                        | `<script>_.flow(...)</script>` |
-
-Browser:
-
-	window.flow(..)  // can be used without lod
-
-
 ## How does this library make code look?
  
 ```
@@ -150,6 +113,39 @@ Issues:
 * mutability issues
 * if/else-clutter
 * unexpected halting of .then()-pipelines
+
+
+## Philosophy
+
+1. functional programming in javascript has 2 categories: the good stuff..and there's the other stuff :)
+2. `_.flow` (=reversed compose) is great, and reduces the amount of temporary variables 
+3. Promises are great building blocks for async flow-control (and can be extended)
+4. mixing functions & promises should be hasslefree (lodash + promise = not hasslefree)
+5. accept javascript, therefore accept and expect mutable objects
+
+| Usage | what this lib does | comment |
+|-|-|-|
+| `_.flow(... , ...)` | adds support for automic promise-resolving | without arguments, it creates an extended promise |
+| `_.flow().then( [Function] )`           | **always** forwards processed input to next function | reduces if/else statements |
+| `_.flow().then( [Function] ).fork()` | **dont wait** for the output, just forward unprocessed input to next function | immutable data FTW |
+| `_.flow().then( ... ).when( isValid )` | **always** forwards input, but processes if isValid({..}) is true | prevents need of inline promise-code and early returns |
+
+> NOTE: optionally you can define your own clonefunction like `.fork(_.cloneDeep)` e.g. 
+
+<img src="https://cdn.shopify.com/s/files/1/0257/1675/t/147/assets/banner_ive-joined.gif?12750917494953216175"/>
+
+## Usage 
+
+| type | how |
+|-|-|
+| nodejs with lodash | `var _                 = require('lodash/fp')`
+| | `_.mixin( require('lodash-fp-composition')` |
+| nodejs without lodash | `var _ = require('lodash-fp-composition')` |
+| browser without lodash | `<script src='https://unpkg.com/lodash-fp-composition'></script>`|
+|                        | `<script>flow(...)</script>
+| browser with lodash     | `<script src='https://unpkg.com/lodash'></script>`|
+|                        | `<script src='https://unpkg.com/lodash-fp-composition'></script>`|
+|                        | `<script>_.flow(...)</script>` |
 
 ---
 
