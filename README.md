@@ -7,58 +7,50 @@ keep the darkside away: practical functional mixins for **lodash/fp** to make co
 ## Philosophy
 
 1. functional programming in javascript has 2 categories: the good stuff..and there's the other stuff :)
-2. `_.flow` (=reversed compose) & `_.trigger` saves us from writing lots of functions & if/else statements 
-3. mixing functions & promises should be hasslefree 
+2. `_.flow` (=reversed compose) is great, and reduces the amount of temporary variables 
+3. Promises are great building blocks for async flow-control (and can be extended)
+4. mixing functions & promises should be hasslefree (lodash + promise = not hasslefree)
+5. accept javascript, therefore accept and expect mutable objects
+
+| Usage | what this lib does | comment |
+|-|-|
+| `_.flow()` | automatically resolves promises | without arguments, it creates an extended promise |
+| `.then( [Function] ) `           | **always** forwards processed input to next function | reduces if/else statements |
+| `.then( [Function] ).fork() | **dont wait** for the output, just forward unprocessed input to next function | immutable data FTW |
+| `.then( ... ).when( isValid )    | **always** forwards input, but processes if isValid({..}) is true | reduces inline conditional promise-code |
+
+> NOTE: optionally you can define your own clonefunction like `.fork(_.cloneDeep)` e.g. 
 
 <img src="https://cdn.shopify.com/s/files/1/0257/1675/t/147/assets/banner_ive-joined.gif?12750917494953216175"/>
 
 So..what could code look like with this library?
 
-```
-engine                   = {}
-engine.getOrCreateUser   = _.flow( 
-                               _.trigger( console.dir ), 
-                               _.either( engine.getUser, engine.createUser ), 
-							   _.trigger( 'address.verified', (v) => console.log("verified:"+v) ), 
-						       _.trigger( _.set('meta.lastlogin', Date.now ) ),  
-                               _.when( _.get('id'),      (dbUser) => console.log("loaded user:"+dbUser.id) ), 
-                               _.when( _.getno('id') ), () => throw 'could not load user' )
-                           )
-						   .catch( console.error )
 
-engine.getOrCreateUser({email:"john@gmail.com"})
-.then( (user) => console.dir(user) )
-```
+| without | with lodash-fp-composition |
+|-|-|
+| | ``` |
+| |  var getUser       = (opts) => db.find({email:opts.email, password:opts.password}) |
+| |  var hasPassword   = _.get('password') |
+| |  var hasNoPassword = _.negate( hasPassword )   |
+| |  var gotoCatch     = (e) => throw e // optionally you can log stuff here |
+| |  var doAnalytics   = Promise.all([logUser, logAnalytics]) |
+| |  var createUser    = (opts) => new Promise( (resolve, reject) => { |
+| |                                    opts.password = '1234' |
+| |                                    db.create(opts) |
+| |                                    .then( resolve ) |
+| |                                    .catch( resolve ) |
+| |                                }) |
+| |  |
+| |  var loginUser    = _.flow() // create empty flow |
+| |              .then( gotoCatch  ).when( hasNoEmail    ) |
+| |              .then( getUser    ).when( hasPassword   ) |
+| |              .then( createUser ).when( hasNoPassword ) |
+| |              .then( doAnalytics ).fork() |
+| |              .then( _.set('lastlogin', Date.now ) |
+| |              .then( saveUser ) |
+| |               .catch( error ) |
+| | ``` |
 
-Instead of:
-
-```
-engine                   = {}
-engine.getOrCreateUser   = function(user){
-    return new Promise( (resolve, reject) => {
-		console.dir(user)
-		engine.getUser(user)
-		.then( (dbUser) => {
-			if( !dbUser ) return engine.createUser(user)
-			else return dbUser
-		})
-		.then( (dbUser) => {
-			if( dbUser ){
-			  if( dbUser.address && dbUser.address.verified ) console.log("verified:"+v)
-			  console.log("user ok") 
-			  if( !dbUser.meta ) dbUser.meta = {}
-			  dbUser.lastlogin = Date.now()
-			  if( dbUser.id ) console.log("loaded user: "+dbUser.id)
-			  else throw 'could not load user'
-			}
-		})
-		.catch( console.error )
-	})
-}
-
-engine.getOrCreateUser({email:"john@gmail.com"})
-.then( (user) => console.dir(user) )
-```
 
 ---
 
