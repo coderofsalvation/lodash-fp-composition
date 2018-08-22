@@ -14,10 +14,10 @@ keep the darkside away: practical functional mixins for **lodash/fp** to make co
 
 | Usage | what this lib does | comment |
 |-|-|
-| `_.flow()` | automatically resolves promises | without arguments, it creates an extended promise |
-| `.then( [Function] ) `           | **always** forwards processed input to next function | reduces if/else statements |
-| `.then( [Function] ).fork() | **dont wait** for the output, just forward unprocessed input to next function | immutable data FTW |
-| `.then( ... ).when( isValid )    | **always** forwards input, but processes if isValid({..}) is true | prevents need of inline promise-code and early returns |
+| `_.flow(... , ...)` | adds support for automic promise-resolving | without arguments, it creates an extended promise |
+| `_.flow().then( [Function] )`           | **always** forwards processed input to next function | reduces if/else statements |
+| `_.flow().then( [Function] ).fork()` | **dont wait** for the output, just forward unprocessed input to next function | immutable data FTW |
+| `_.flow().then( ... ).when( isValid )` | **always** forwards input, but processes if isValid({..}) is true | prevents need of inline promise-code and early returns |
 
 > NOTE: optionally you can define your own clonefunction like `.fork(_.cloneDeep)` e.g. 
 
@@ -27,35 +27,36 @@ keep the darkside away: practical functional mixins for **lodash/fp** to make co
 
 
 ```
- var hasPassword       = _.get('password')
- var hasNoPassword     = _.negate( hasPassword )
- var getUser           = opts => db.find({email:opts.email, password:opts.password})
- var gotoCatch         = err => e => throw e // optionally you can log stuff here
- var doAnalytics       = Promise.all([logUser, logAnalytics])
- var notifyExpiryDate  = opts => return true         // mock
- var userAlmostExpired = opts => return true         // mock
- var error             = (opts, err)  => return true // mock 
- var reply             = opts => req.send(opts)
+var hasPassword       = _.get('password')
+var hasNoPassword     = _.negate( hasPassword )
+var getUser           = opts => db.find({email:opts.email, password:opts.password})
+var gotoCatch         = err => e => throw e // optionally you can log stuff here
+var doAnalytics       = Promise.all([logUser, logAnalytics])
+var notifyExpiryDate  = opts => return true         // mock
+var userAlmostExpired = opts => return true         // mock
+var updateLastLogin = _.set('lastlogin', Date.now )
+var error             = (opts, err)  => return true // mock 
+var reply             = opts => req.send(opts)
 
- var createUser        = opts => new Promise( (resolve, reject) => {
-				            opts.password = '1234'
-				            db.create(opts)
-				            .then( resolve )
-				            .catch( resolve )
-				         })
+var createUser        = opts => new Promise( (resolve, reject) => {
+   			               opts.password = '1234'
+   			               db.create(opts)
+   			               .then( resolve )
+   			               .catch( resolve )
+   			            })
 
 
- var loginUser    = _.flow() // create empty flow
-                     .then( gotoCatch('no email')  ).when( hasNoEmail    )
-                     .then( getUser    ).when( hasPassword   )
-                     .then( createUser ).when( hasNoPassword )
-                     .then( doAnalytics ).fork()
-                     .then( _.set('lastlogin', Date.now ) )
-                     .then( notifyExpiryDate ).when( userAlmostExpired ).fork()
-                     .then( saveUser )
-                     .then( doAnalytics ).fork()
-				     .then( reply )
-                     .catch( error )
+var loginUser         = _.flow() // create empty flow
+                         .then( error('no email') ).when( hasNoEmail    )
+                         .then( getUser           ).when( hasPassword   )
+                         .then( createUser        ).when( hasNoPassword )
+                         .then( doAnalytics       ).fork()
+                         .then( updateLastLogin   )
+                         .then( notifyExpiryDate  ).when( userAlmostExpired ).fork()
+                         .then( saveUser          )
+                         .then( doAnalytics       ).fork()
+   			             .then( reply )
+                         .catch( error )
 ```
 
 > NOTE: `fork()` doesn't wait for the execution of that line. Its execution will never never break the flow (=desired)
@@ -90,7 +91,7 @@ var loginUser = (opts) => new Promise( (resolve, reject) => {
 	getOrCreateUser(opts)
 	.then( (u) => {
         user = u
-		doAnalytics.then( () => false ).catch( () => false )
+		doAnalytics.then( () => false ).catch( () => false ) // ugly parallel code
 	})
 	.then( () => {
 		user.lastlogin = Date.now()
@@ -104,7 +105,7 @@ var loginUser = (opts) => new Promise( (resolve, reject) => {
 		}
 	})
 	.then( () => {
-		doAnalytics.then( () => false ).catch( () => false )
+		doAnalytics.then( () => false ).catch( () => false ) // ugly parallel code
 	})
 	.then( () => saveUser(user) )
     .then( () => reply(user) )
@@ -124,7 +125,7 @@ var loginUser = (opts) => new Promise( (resolve, reject) => {
 
 # Function Reference
 
-## _.flow( mixed_arguments_of_promises_and_functions, ... )
+## _.flow( promise_or_function, ... )
  
 Improved version of _.flow, which also supports automatic resolving of promises.
 Note: modifies output. 
