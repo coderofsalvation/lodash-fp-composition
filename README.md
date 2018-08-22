@@ -23,7 +23,7 @@ keep the darkside away: practical functional mixins for **lodash/fp** to make co
 
 <img src="https://cdn.shopify.com/s/files/1/0257/1675/t/147/assets/banner_ive-joined.gif?12750917494953216175"/>
 
-## code WITH lodash + this library:
+## Usage using lodash + this lib
 
 
 ```
@@ -61,7 +61,7 @@ var loginUser         = _.flow() // create empty flow
 
 > NOTE: `fork()` doesn't wait for the execution of that line. Its execution happens parallel, will never never break the flow (=desired)
 
-## code WITHOUT lodash + this library:
+## Or else you will get this
 
 ```
 var doAnalytics       = Promise.all([logUser, logAnalytics])
@@ -71,49 +71,49 @@ var userAlmostExpired = opts => return true         // mock
 var reply             = opts => req.send(opts)
 
 var createUser        = opts => new Promise( (resolve, reject) => {
-						opts.password = '1234'
-						db.create(opts)
-						.then( resolve )
-						.catch( resolve )
-					  })
+                          opts.password = '1234'
+                          db.create(opts)
+                          .then( resolve )
+                          .catch( resolve )
+                        })
 
 var loginUser = (opts) => new Promise( (resolve, reject) => {
-	if( !opts.email ){ 
-		// log stuff here
-		return req.send({err:"no email"})
-	}
-	var user
-	var getOrCreateUser
-	if( opts.password ){ 
-		getOrCreateUser = getUser
-	}else{
-		getOrCreateUser = createUser
-	}
-	getOrCreateUser(opts)
-	.then( (u) => {
+  if( !opts.email ){ 
+    // log stuff here
+    return req.send({err:"no email"})
+  }
+  var user
+  var getOrCreateUser
+  if( opts.password ){ 
+    getOrCreateUser = getUser
+  }else{
+    getOrCreateUser = createUser
+  }
+  getOrCreateUser(opts)
+  .then( (u) => {
         user = u
-		doAnalytics.then( () => false ).catch( () => false ) // ugly parallel code
-	})
-	.then( () => {
-		user.lastlogin = Date.now()
-		// PROBLEM: user is now modified..so code below will process an updated userobject 
-	})
-	.then( () => {
-		if( userAlmostExpired(user) ){    // will not work because of previous problem
-			notifyExpiryDate(user)        // even if it would work..
-										  // this could throw an exception
-										  // an skip code execution below
-		}
-	})
-	.then( () => {
-		doAnalytics.then( () => false ).catch( () => false ) // ugly parallel code
-	})
-	.then( () => saveUser(user) )
+    doAnalytics.then( () => false ).catch( () => false ) // ugly parallel code
+  })
+  .then( () => {
+    user.lastlogin = Date.now()
+    // PROBLEM: user is now modified..so code below will process an updated userobject 
+  })
+  .then( () => {
+    if( userAlmostExpired(user) ){  // will not work because of previous problem
+      notifyExpiryDate(user)        // even if it would work..
+                                    // this could throw an exception
+                                    // an skip code execution below
+    }
+  })
+  .then( () => {
+    doAnalytics.then( () => false ).catch( () => false ) // ugly parallel code
+  })
+  .then( () => saveUser(user) )
     .then( () => reply(user) )
     .catch( err => {
-		if( !user ) user = opts 
-		reply({ err, ...user})	
-	})	
+    if( !user ) user = opts 
+    reply({ err, ...user})  
+  })  
 
 })
 
