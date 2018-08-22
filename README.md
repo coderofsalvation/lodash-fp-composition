@@ -39,7 +39,7 @@ var loginUser         = _.flow() // create empty flow
                          .catch( error )
 ```
 
-> NOTE: `fork()` doesn't wait for the execution of that line. Its execution happens parallel, will never never break the flow (=desired)
+> NOTE: `fork()` doesn't wait for the execution of that line. Its execution happens parallel, so it will never break the flow (=desired)
 
 Summary:
 
