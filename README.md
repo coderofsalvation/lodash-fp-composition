@@ -31,12 +31,15 @@ var loginUser         = _.flow() // create empty flow
                          .then( getUser           ).when( hasPassword   )
                          .then( createUser        ).when( hasNoPassword )
                          .then( doAnalytics       ).fork()
-                         .then( updateLastLogin   )
-                         .then( notifyExpiryDate  ).when( userAlmostExpired ).fork()
+                         .then( updateLastLogin   ).fork()
+                         .then( notifyExpiryDate  ).when( userAlmostExpired )
                          .then( saveUser          )
                          .then( doAnalytics       ).fork()
-                         .then( reply )
                          .catch( error )
+
+
+var loginUserAndReply = _.flow(loginUser,reply)
+						 .catch( opts => error => reply({...opts,error}) )
 ```
 
 > NOTE: `fork()` doesn't wait for the execution of that line. Its triggers parallel execution, therefore it will never break the flow (=desired)
@@ -48,6 +51,7 @@ Summary:
 * no if/else-clutter
 * no early returns (pipeline certainty)
 * immutable
+* code is loosely coupled to webrequest 
 
 ## Because you don't want this
 
@@ -113,6 +117,7 @@ Issues:
 * mutability issues
 * if/else-clutter
 * unexpected halting of .then()-pipelines
+* code is rightly coupled to webrequest 
 
 
 ## Philosophy
