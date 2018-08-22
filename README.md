@@ -23,15 +23,7 @@ keep the darkside away: practical functional mixins for **lodash/fp** to make co
 
 <img src="https://cdn.shopify.com/s/files/1/0257/1675/t/147/assets/banner_ive-joined.gif?12750917494953216175"/>
 
-## What does this library do?
-
-It makes complex code:
-
-* look easy
-* easy to maintain
-* conditional without if/else-clutter
-* no early returns (pipeline certainty)
-* immutable
+## How does this library make code look?
  
 ```
 var hasPassword       = _.get('password')
@@ -68,14 +60,15 @@ var loginUser         = _.flow() // create empty flow
 
 > NOTE: `fork()` doesn't wait for the execution of that line. Its execution happens parallel, will never never break the flow (=desired)
 
+Summary:
+
+* look easy
+* easy to maintain
+* conditional without if/else-clutter
+* no early returns (pipeline certainty)
+* immutable
+
 ## Because you don't want this
-
-problems: 
-
-* early returns 
-* mutability issues
-* if/else-clutter
-* unexpected halting of .then()-pipelines
 
 ```
 var doAnalytics       = Promise.all([logUser, logAnalytics])
@@ -130,11 +123,16 @@ var loginUser = (opts) => new Promise( (resolve, reject) => {
   })  
 
 })
-
-> NOTE: notice the need for temporary variables and if/else plumbing
-
-
 ```
+
+Problems: 
+
+* early returns 
+* needs temporary variables
+* mutability issues
+* if/else-clutter
+* unexpected halting of .then()-pipelines
+
 
 ---
 
