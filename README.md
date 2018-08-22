@@ -71,6 +71,9 @@ Summary:
 ## Because you don't want this
 
 ```
+var _  = require('lodash')
+_.mixin( require('lodash-fp-composition')
+
 var doAnalytics       = Promise.all([logUser, logAnalytics])
 var getUser           = db.find({email:opts.email, password:opts.password})
 var notifyExpiryDate  = opts => return true         // mock
