@@ -45,7 +45,7 @@ t.add("testing _.flow && _.trigger",  function(next, error){
 	a({foo:"bar"})
 })
 t.add("testing _.flow exception",  function(next, error){
-	var onError = function(err){
+	var onError = input => err => {
 		if( err != 'an error' ) return error("did not catch exception")
 		next()
 	}
@@ -58,7 +58,7 @@ t.add("testing _.flow exception",  function(next, error){
 })
 
 t.add("testing _.flow promise rejects",  function(next, error){
-	var onError = function(err){
+	var onError = input => err => {
 		if( err != 'reject!' ) return error("did not catch exception")
 		next()
 	}

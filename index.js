@@ -233,8 +233,6 @@ var lodash_fp_composition = {
 	mapAsync: mapAsync, 
 	lensOver:lensOver,
 	flow:compose,
-	either: either,
-	getno:getno, 
 	when: when,
 	trigger: trigger,
 	template_es6: template_es6,
@@ -250,8 +248,6 @@ if( nodejs ){
 	// standalone
 	module.exports.flow = compose
 	module.exports.lensOver = lensOver
-	module.exports.either = either
-	module.exports.getno = getno
 	module.exports.when = when
 	module.exports.trigger = trigger
 	module.exports.template_es6 = template_es6

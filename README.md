@@ -15,7 +15,7 @@ var doAnalytics       = Promise.all([logUser, logAnalytics])
 var notifyExpiryDate  = opts => return true         // mock
 var userAlmostExpired = opts => return true         // mock
 var updateLastLogin   = _.set('lastlogin', Date.now )
-var error             = (opts, err)  => return true // mock 
+var error             = opts => err => return true // mock 
 var reply             = opts => req.send(opts)
 
 var createUser        = opts => new Promise( (resolve, reject) => {
@@ -35,7 +35,6 @@ var loginUser         = _.flow() // create empty flow
                          .then( notifyExpiryDate  ).when( userAlmostExpired )
                          .then( saveUser          )
                          .then( doAnalytics       ).fork()
-                         .catch( error )
 
 
 var loginUserAndReply = _.flow( loginUser, _.log, reply )
@@ -52,6 +51,7 @@ Summary:
 * no early returns (pipeline certainty)
 * immutable
 * code is not tightly coupled to webrequest 
+* no temporary variables 
 
 ## Because you don't want this
 
