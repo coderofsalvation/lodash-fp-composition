@@ -40,13 +40,13 @@ So..what could code look like with this library?
                                })
 
  var loginUser    = _.flow() // create empty flow
-             .then( gotoCatch  ).when( hasNoEmail    )
-             .then( getUser    ).when( hasPassword   )
-             .then( createUser ).when( hasNoPassword )
-             .then( doAnalytics ).fork()
-             .then( _.set('lastlogin', Date.now )
-             .then( saveUser )
-              .catch( error )
+                     .then( gotoCatch  ).when( hasNoEmail    )
+                     .then( getUser    ).when( hasPassword   )
+                     .then( createUser ).when( hasNoPassword )
+                     .then( doAnalytics ).fork()
+                     .then( _.set('lastlogin', Date.now )
+                     .then( saveUser )
+                     .catch( error )
 ```
 
 
