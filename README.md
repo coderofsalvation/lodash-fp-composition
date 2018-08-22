@@ -4,7 +4,7 @@ keep the darkside away: practical functional mixins for **lodash/fp** to make co
 
 > Warning: Experimental
 
-## How does this library make code look?
+## How does this library makes my code look?
  
 ```
 var hasPassword       = _.get('password')
