@@ -1,4 +1,4 @@
-keep the darkside away: practical functional mixins for **lodash/fp** to make code more readable, maintainable & composable
+keep the darkside away: supercharge **lodash/fp** with promise- and immutable support to make code more readable, maintainable & composable
 
 <center><img src='https://media1.giphy.com/media/VZovxx7W7tbu8/giphy.gif' width="50%"/></center>
 
