@@ -26,30 +26,28 @@ keep the darkside away: practical functional mixins for **lodash/fp** to make co
 So..what could code look like with this library?
 
 
-| without | with lodash-fp-composition |
-|-|-|
-| | ``` |
-| |  var getUser       = (opts) => db.find({email:opts.email, password:opts.password}) |
-| |  var hasPassword   = _.get('password') |
-| |  var hasNoPassword = _.negate( hasPassword )   |
-| |  var gotoCatch     = (e) => throw e // optionally you can log stuff here |
-| |  var doAnalytics   = Promise.all([logUser, logAnalytics]) |
-| |  var createUser    = (opts) => new Promise( (resolve, reject) => { |
-| |                                    opts.password = '1234' |
-| |                                    db.create(opts) |
-| |                                    .then( resolve ) |
-| |                                    .catch( resolve ) |
-| |                                }) |
-| |  |
-| |  var loginUser    = _.flow() // create empty flow |
-| |              .then( gotoCatch  ).when( hasNoEmail    ) |
-| |              .then( getUser    ).when( hasPassword   ) |
-| |              .then( createUser ).when( hasNoPassword ) |
-| |              .then( doAnalytics ).fork() |
-| |              .then( _.set('lastlogin', Date.now ) |
-| |              .then( saveUser ) |
-| |               .catch( error ) |
-| | ``` |
+```
+ var getUser       = (opts) => db.find({email:opts.email, password:opts.password})
+ var hasPassword   = _.get('password')
+ var hasNoPassword = _.negate( hasPassword )
+ var gotoCatch     = (e) => throw e // optionally you can log stuff here
+ var doAnalytics   = Promise.all([logUser, logAnalytics])
+ var createUser    = (opts) => new Promise( (resolve, reject) => {
+                                   opts.password = '1234'
+                                   db.create(opts)
+                                   .then( resolve )
+                                   .catch( resolve )
+                               })
+
+ var loginUser    = _.flow() // create empty flow
+             .then( gotoCatch  ).when( hasNoEmail    )
+             .then( getUser    ).when( hasPassword   )
+             .then( createUser ).when( hasNoPassword )
+             .then( doAnalytics ).fork()
+             .then( _.set('lastlogin', Date.now )
+             .then( saveUser )
+              .catch( error )
+```
 
 
 ---
