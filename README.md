@@ -51,7 +51,7 @@ Summary:
 * no if/else-clutter
 * no early returns (pipeline certainty)
 * immutable
-* code is loosely coupled to webrequest 
+* code is not tightly coupled to webrequest 
 
 ## Because you don't want this
 
@@ -117,7 +117,7 @@ Issues:
 * mutability issues
 * if/else-clutter
 * unexpected halting of .then()-pipelines
-* code is rightly coupled to webrequest 
+* code is tightly coupled to webrequest 
 
 
 ## Philosophy
