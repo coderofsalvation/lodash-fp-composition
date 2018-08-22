@@ -14,7 +14,7 @@ var gotoCatch         = err => e => throw e // optionally you can log stuff here
 var doAnalytics       = Promise.all([logUser, logAnalytics])
 var notifyExpiryDate  = opts => return true         // mock
 var userAlmostExpired = opts => return true         // mock
-var updateLastLogin = _.set('lastlogin', Date.now )
+var updateLastLogin   = _.set('lastlogin', Date.now )
 var error             = (opts, err)  => return true // mock 
 var reply             = opts => req.send(opts)
 
