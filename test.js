@@ -1,4 +1,5 @@
-var _ = require('./')
+var _ = require('lodash/fp') 
+_.mixin( require('./') )
 
 function test(opts){
 	this.node   = typeof process != undefined
@@ -43,7 +44,6 @@ t.add("testing _.flow && _.trigger",  function(next, error){
 	)
 	a({foo:"bar"})
 })
-
 t.add("testing _.flow exception",  function(next, error){
 	var onError = function(err){
 		if( err != 'an error' ) return error("did not catch exception")
@@ -68,6 +68,21 @@ t.add("testing _.flow promise rejects",  function(next, error){
 	).catch(onError)
 
 	a({foo:"bar"})
+})
+
+t.add("testing empty _.flow && _.trigger && _.when",  function(next, error){
+	var input     = {a:1, b:1}
+	var equal     = (prop, val ) => input => input[prop] == val
+	var increment = (prop, val ) => input => input[prop] += val
+
+	var superfunc = _.flow() // create empty flow
+					 .then( increment('a',2) ).when( equal('a', 1) )
+					 .then( increment('b',2) ).when( equal('a', 3) ).fork()
+					 .then( increment('a',2) )
+			 		 .catch( error )
+	superfunc(input)
+	.then( (i) => i.a == 5 && i.b == 1 ? next() : error(JSON.stringify(i)) )
+	.catch(console.error) 
 })
 
 t.run()

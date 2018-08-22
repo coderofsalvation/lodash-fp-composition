@@ -62,9 +62,9 @@ var loginUser         = _.flow() // create empty flow
 
 Summary:
 
-* look easy
+* looks easy
 * easy to maintain
-* conditional without if/else-clutter
+* no if/else-clutter
 * no early returns (pipeline certainty)
 * immutable
 
@@ -125,14 +125,13 @@ var loginUser = (opts) => new Promise( (resolve, reject) => {
 })
 ```
 
-Problems: 
+Issues: 
 
 * early returns 
 * needs temporary variables
 * mutability issues
 * if/else-clutter
 * unexpected halting of .then()-pipelines
-
 
 ---
 
@@ -160,26 +159,6 @@ trigger simply executes a function OR promise, but forwards original input as ou
 this comes in handy when you don't want to break a flow/chain
  
 > example:	_.flow( _.trigger( alert ), _.trigger(console.dir) )({foo:"bar"})
- 
-## _.either(a, b)
- 
-this will execute function b only when function a returns false/null/undefined
- 
-> example: _.either(getUserByEmail,createUserEmail)("foo@gmail.com")
- 
-## _.getno(path)
- 
-this is the opposite of _.get 
- 
-> example: var a = _.getno( 'foo.bar' )
-         a({foo:1}) // returns true
- 
-## _.maybe(fn)
- 
-this will execute function fn only when there's input.
-this comes in handy when its unsure whether the previous function was succesful in a chain/flow/composed function.(){}
- 
-> example: _.flow( getOrCreateUser, maybe(_.log("user ok")) )
  
 ## _.when(f, g)
  

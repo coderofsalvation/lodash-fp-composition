@@ -1,48 +1,5 @@
 'use strict';
-var _ = require('lodash')
-
 // NOTE: following are all curried functions
-
-/* _.either(a, b)
- *
- * this will execute function b only when function a returns false/null/undefined
- *
- * example: _.either(getUserByEmail,createUserEmail)("foo@gmail.com")
- */
-
-function either(a,b){
-	return function(input){
-		return a(input) || b(input)
-	}
-}
-
-/* _.getno(path)
- *
- * this is the opposite of _.get 
- *
- * example: var a = _.getno( 'foo.bar' )
- *          a({foo:1}) // returns true
- */
-
-function getno(path){
-	return function(input){
-		return _.get(path,input) == undefined
-	}
-}
-
-/* _.maybe(fn)
- *
- * this will execute function fn only when there's input.
- * this comes in handy when its unsure whether the previous function was succesful in a chain/flow/composed function.(){}
- *
- * example: _.flow( getOrCreateUser, maybe(_.log("user ok")) )
- */
-
-function maybe(fn){
-	return function(input){
-		return input ? fn(input) : input
-	}
-}
 
 /* _.when(f, g)
  *
@@ -74,17 +31,44 @@ function when(f,g){
  */
 
 var compose                                        
+var flow
 var internalCompose = function (args) {            
 	var f 
 	f = function (initialValue) {              
 		var chain = compose.Promise || Promise.resolve(initialValue)        
 		var i, j                                   
 		var me = this
-		for (i = 0, j = args.length; i < j; i++){
-			chain = chain.then( args[i].then ? function(p){ return p }.bind(null,args[i]) : args[i] )
+		for (i = 0, j = f.args.length; i < j; i++){
+			chain = chain.then( f.args[i].then ? function(p){ return p }.bind(null,f.args[i]) : f.args[i] )
 		}
-		chain.catch( f.catch )
+		if( f.catch ){
+		  f.catch(initialValue)
+		  chain.catch( f.catch )
+		}
 		return chain
+	}
+	f.args = Array.prototype.slice.call(args)
+	f.then = function(){
+		var args = Array.prototype.slice.call(arguments)
+		args.map( function(c){
+			f.args.push( trigger(c) )
+		})
+		return f
+	}
+	f.when = function(condition ){
+		var last = f.args[ f.args.length-1 ]
+		f.args[ f.args.length-1] = function(input){
+			return condition(input) ? last(input) : input 
+		}
+		return f
+	}
+	f.fork = function(func){
+		var last = f.args[ f.args.length-1 ]
+		f.args[ f.args.length-1] = function(input){
+			last( func ? func(input) : JSON.parse( JSON.stringify(input) )  )
+			return input 
+		}
+		return f
 	}
 	f.catch = function(efn){ f.catch = efn; return f }
 	return f
@@ -93,6 +77,7 @@ var internalCompose = function (args) {
 function compose () {
 	return internalCompose(arguments)
 }
+flow = compose
 
 /* _.lensOver(path, fn)
  *
@@ -259,17 +244,23 @@ var functions = {
 	postfix:postfix
 }
 
-_.mixin(functions)
+var nodejs = (typeof module !== 'undefined' && typeof module.exports !== 'undefined')
 
-module.exports.flow = compose
-module.exports.lensOver = lensOver
-module.exports.either = either
-module.exports.getno = getno
-module.exports.when = when
-module.exports.trigger = trigger
-module.exports.template_es6 = template_es6
-module.exports.log = log
-module.exports.error = error
-module.exports.mapAsync = mapAsync
-module.exports.prefix = prefix
-module.exports.postfix = postfix
+if( nodejs ){
+	// standalone
+	module.exports.flow = compose
+	module.exports.lensOver = lensOver
+	module.exports.either = either
+	module.exports.getno = getno
+	module.exports.when = when
+	module.exports.trigger = trigger
+	module.exports.template_es6 = template_es6
+	module.exports.log = log
+	module.exports.error = error
+	module.exports.mapAsync = mapAsync
+	module.exports.prefix = prefix
+	module.exports.postfix = postfix
+}else{
+	if( window._ ) _.mixin(functions)
+	else for ( var i in functions  ) window[i] = functions[i]
+}
