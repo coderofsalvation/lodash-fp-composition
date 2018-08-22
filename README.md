@@ -17,38 +17,108 @@ keep the darkside away: practical functional mixins for **lodash/fp** to make co
 | `_.flow()` | automatically resolves promises | without arguments, it creates an extended promise |
 | `.then( [Function] ) `           | **always** forwards processed input to next function | reduces if/else statements |
 | `.then( [Function] ).fork() | **dont wait** for the output, just forward unprocessed input to next function | immutable data FTW |
-| `.then( ... ).when( isValid )    | **always** forwards input, but processes if isValid({..}) is true | reduces inline conditional promise-code |
+| `.then( ... ).when( isValid )    | **always** forwards input, but processes if isValid({..}) is true | prevents need of inline promise-code and early returns |
 
 > NOTE: optionally you can define your own clonefunction like `.fork(_.cloneDeep)` e.g. 
 
 <img src="https://cdn.shopify.com/s/files/1/0257/1675/t/147/assets/banner_ive-joined.gif?12750917494953216175"/>
 
-So..what could code look like with this library?
+## code WITH lodash + this library:
 
 
 ```
- var getUser       = (opts) => db.find({email:opts.email, password:opts.password})
- var hasPassword   = _.get('password')
- var hasNoPassword = _.negate( hasPassword )
- var gotoCatch     = (e) => throw e // optionally you can log stuff here
- var doAnalytics   = Promise.all([logUser, logAnalytics])
- var createUser    = (opts) => new Promise( (resolve, reject) => {
-                                   opts.password = '1234'
-                                   db.create(opts)
-                                   .then( resolve )
-                                   .catch( resolve )
-                               })
+ var hasPassword       = _.get('password')
+ var hasNoPassword     = _.negate( hasPassword )
+ var getUser           = opts => db.find({email:opts.email, password:opts.password})
+ var gotoCatch         = err => e => throw e // optionally you can log stuff here
+ var doAnalytics       = Promise.all([logUser, logAnalytics])
+ var notifyExpiryDate  = opts => return true         // mock
+ var userAlmostExpired = opts => return true         // mock
+ var error             = (opts, err)  => return true // mock 
+ var reply             = opts => req.send(opts)
+
+ var createUser        = opts => new Promise( (resolve, reject) => {
+				            opts.password = '1234'
+				            db.create(opts)
+				            .then( resolve )
+				            .catch( resolve )
+				         })
+
 
  var loginUser    = _.flow() // create empty flow
-                     .then( gotoCatch  ).when( hasNoEmail    )
+                     .then( gotoCatch('no email')  ).when( hasNoEmail    )
                      .then( getUser    ).when( hasPassword   )
                      .then( createUser ).when( hasNoPassword )
                      .then( doAnalytics ).fork()
-                     .then( _.set('lastlogin', Date.now )
+                     .then( _.set('lastlogin', Date.now ) )
+                     .then( notifyExpiryDate ).when( userAlmostExpired ).fork()
                      .then( saveUser )
+                     .then( doAnalytics ).fork()
+				     .then( reply )
                      .catch( error )
 ```
 
+> NOTE: `fork()` doesn't wait for the execution of that line. Its execution will never never break the flow (=desired)
+
+## code WITHOUT lodash + this library:
+
+``
+
+var doAnalytics       = Promise.all([logUser, logAnalytics])
+var getUser           = db.find({email:opts.email, password:opts.password})
+var notifyExpiryDate  = opts => return true         // mock
+var userAlmostExpired = opts => return true         // mock
+var createUser        = opts => new Promise( (resolve, reject) => {
+						opts.password = '1234'
+						db.create(opts)
+						.then( resolve )
+						.catch( resolve )
+					  })
+
+var loginUser = (opts) => new Promise( (resolve, reject) => {
+	if( !opts.email ){ 
+		// log stuff here
+		return req.send({err:"no email"})
+	}
+	var user
+	var getOrCreateUser
+	if( opts.password ){ 
+		getOrCreateUser = getUser
+	}else{
+		getOrCreateUser = createUser
+	}
+	getOrCreateUser(opts)
+	.then( (u) => {
+        user = u
+		doAnalytics.then( () => false ).catch( () => false )
+	})
+	.then( () => {
+		user.lastlogin = Date.now()
+		// PROBLEM: user is now modified..so code below will process an updated userobject 
+	})
+	.then( () => {
+		if( userAlmostExpired(user) ){    // will not work because of previous problem
+			notifyExpiryDate(user)        // even if it would work..
+										  // this could throw an exception
+										  // an skip code execution below
+		}
+	})
+	.then( () => {
+		doAnalytics.then( () => false ).catch( () => false )
+	})
+	.then( () => saveUser(user) )
+    .then( () => reply(user) )
+    .catch( err => {
+		if( !user ) user = opts 
+		reply({ err, ...user})	
+	})	
+
+})
+
+> NOTE: notice the need for temporary variables and if/else plumbing
+
+
+```
 
 ---
 
