@@ -59,16 +59,17 @@ var loginUser         = _.flow() // create empty flow
                          .catch( error )
 ```
 
-> NOTE: `fork()` doesn't wait for the execution of that line. Its execution will never never break the flow (=desired)
+> NOTE: `fork()` doesn't wait for the execution of that line. Its execution happens parallel, will never never break the flow (=desired)
 
 ## code WITHOUT lodash + this library:
 
-``
-
+```
 var doAnalytics       = Promise.all([logUser, logAnalytics])
 var getUser           = db.find({email:opts.email, password:opts.password})
 var notifyExpiryDate  = opts => return true         // mock
 var userAlmostExpired = opts => return true         // mock
+var reply             = opts => req.send(opts)
+
 var createUser        = opts => new Promise( (resolve, reject) => {
 						opts.password = '1234'
 						db.create(opts)
