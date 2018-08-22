@@ -116,8 +116,8 @@ var loginUser = (opts) => new Promise( (resolve, reject) => {
     doAnalytics.then( () => false ).catch( () => false ) // ugly parallel code
   })
   .then( () => saveUser(user) )
-    .then( () => reply(user) )
-    .catch( err => {
+  .then( () => reply(user) )
+  .catch( err => {
     if( !user ) user = opts 
     reply({ err, ...user})  
   })  
