@@ -25,8 +25,20 @@ keep the darkside away: practical functional mixins for **lodash/fp** to make co
 
 ## Usage 
 
-		var _                 = require('lodash/fp')
-		_.mixin( require('lodash-fp-composition')
+| type | how |
+|-|-|
+| nodejs with lodash | `var _                 = require('lodash/fp')`
+| | `_.mixin( require('lodash-fp-composition')` |
+| nodejs without lodash | `var _ = require('lodash-fp-composition')` |
+| browser without lodash | `<script src='https://unpkg.com/lodash-fp-composition'></script>`|
+|                        | `<script>flow(...)</script>
+| browser with lodash     | `<script src='https://unpkg.com/lodash'></script>`|
+|                        | `<script src='https://unpkg.com/lodash-fp-composition'></script>`|
+|                        | `<script>_.flow(...)</script>` |
+
+Browser:
+
+	window.flow(..)  // can be used without lod
 
 
 ## How does this library make code look?

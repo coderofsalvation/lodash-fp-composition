@@ -229,7 +229,7 @@ function mapAsync(arr, done, cb) {
 	return funcs[0]()
 }
 
-var functions = {
+var lodash_fp_composition = {
 	mapAsync: mapAsync, 
 	lensOver:lensOver,
 	flow:compose,
@@ -261,6 +261,6 @@ if( nodejs ){
 	module.exports.prefix = prefix
 	module.exports.postfix = postfix
 }else{
-	if( window._ ) _.mixin(functions)
-	else for ( var i in functions  ) window[i] = functions[i]
+	if( window._ ) _.mixin(lodash_fp_composition)
+	else for ( var i in lodash_fp_composition  ) window[i] = lodash_fp_composition[i]
 }
