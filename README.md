@@ -38,11 +38,11 @@ var error             = (opts, err)  => return true // mock
 var reply             = opts => req.send(opts)
 
 var createUser        = opts => new Promise( (resolve, reject) => {
-   			               opts.password = '1234'
-   			               db.create(opts)
-   			               .then( resolve )
-   			               .catch( resolve )
-   			            })
+                           opts.password = '1234'
+                           db.create(opts)
+                           .then( resolve )
+                           .catch( resolve )
+                        })
 
 
 var loginUser         = _.flow() // create empty flow
@@ -54,7 +54,7 @@ var loginUser         = _.flow() // create empty flow
                          .then( notifyExpiryDate  ).when( userAlmostExpired ).fork()
                          .then( saveUser          )
                          .then( doAnalytics       ).fork()
-   			             .then( reply )
+                         .then( reply )
                          .catch( error )
 ```
 
