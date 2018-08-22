@@ -38,8 +38,8 @@ var loginUser         = _.flow() // create empty flow
                          .catch( error )
 
 
-var loginUserAndReply = _.flow(loginUser,reply)
-						 .catch( opts => error => reply({...opts,error}) )
+var loginUserAndReply = _.flow( loginUser, _.log, reply )
+                         .catch( opts => error => reply({...opts,error}) )
 ```
 
 > NOTE: `fork()` doesn't wait for the execution of that line. Its triggers parallel execution, therefore it will never break the flow (=desired)
