@@ -23,6 +23,12 @@ keep the darkside away: practical functional mixins for **lodash/fp** to make co
 
 <img src="https://cdn.shopify.com/s/files/1/0257/1675/t/147/assets/banner_ive-joined.gif?12750917494953216175"/>
 
+## Usage 
+
+		var _                 = require('lodash/fp')
+		_.mixin( require('lodash-fp-composition')
+
+
 ## How does this library make code look?
  
 ```
@@ -71,9 +77,6 @@ Summary:
 ## Because you don't want this
 
 ```
-var _  = require('lodash')
-_.mixin( require('lodash-fp-composition')
-
 var doAnalytics       = Promise.all([logUser, logAnalytics])
 var getUser           = db.find({email:opts.email, password:opts.password})
 var notifyExpiryDate  = opts => return true         // mock
